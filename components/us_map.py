@@ -5,23 +5,23 @@ import streamlit as st
 from constants.conditions import CONDITION_LABELS
 
 
-def render_us_map(df: pd.DataFrame, selected_col: str):
-    count_df = (
-        df[df[selected_col] == "Yes"]
+def plot_us_map(df: pd.DataFrame, selected_condition: str):
+    df_counts = (
+        df[df[selected_condition] == "Yes"]
         .groupby(["State", "StateCode"])
         .size()
-        .reset_index(name=selected_col)
+        .reset_index(name=selected_condition)
     )
 
     fig = px.choropleth(
-        count_df,
+        df_counts,
         locations="StateCode",
         locationmode="USA-states",
-        color=selected_col,
+        color=selected_condition,
         scope="usa",
         hover_name="State",
-        hover_data={"StateCode": False, selected_col: True},
-        labels={selected_col: CONDITION_LABELS[selected_col]},
+        hover_data={"StateCode": False, selected_condition: True},
+        labels={selected_condition: CONDITION_LABELS[selected_condition]},
         color_continuous_scale="Reds",
     )
 
