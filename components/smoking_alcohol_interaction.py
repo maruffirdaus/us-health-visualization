@@ -33,7 +33,7 @@ def render_smoking_alcohol_interaction(
         )
 
         st.markdown(
-            f"This chart illustrates the **interaction between smoking status and alcohol consumption in relation to {CONDITION_LABELS[selected_condition]}**, with bubble size and color representing the relative case ratio. <mark>The highest recorded ratio appears for {smoker_status} among {alcohol_drinkers} individuals at approximately {highest['Case Ratio (%)']:0.2f} %</mark>, while other combinations show varying levels, indicating that {CONDITION_LABELS[selected_condition]} prevalence differs across lifestyle behavior pairings.",
+            f"This chart illustrates the **interaction between smoking status and alcohol consumption in relation to {CONDITION_LABELS[selected_condition]}**, with bubble size and color representing the relative case ratio. <mark>The highest recorded ratio appears for {smoker_status} among {alcohol_drinkers} individuals at approximately {highest['Case Ratio (%)']:0.2f}%</mark>, while other combinations show varying levels, indicating that {CONDITION_LABELS[selected_condition]} prevalence differs across lifestyle behavior pairings.",
             unsafe_allow_html=True,
         )
 
@@ -88,7 +88,7 @@ def _plot_smoking_alcohol_interaction(df: pd.DataFrame, selected_condition: str)
             y=alt.Y("Alcohol Drinkers:N", title="Alcohol Drinkers"),
             size=alt.Size(
                 "Case Ratio (%):Q",
-                title=f"{CONDITION_LABELS[selected_condition]} Ratio (%)",
+                title=f"{CONDITION_LABELS[selected_condition]} Case Ratio (%)",
                 scale=alt.Scale(range=[100, 2000]),
             ),
             color=alt.Color(

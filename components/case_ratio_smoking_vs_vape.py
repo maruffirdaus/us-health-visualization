@@ -17,6 +17,26 @@ def render_case_ratio_smoking_vs_vape(
     with st.container(border=True):
         _plot_case_ratio_smoking_vs_vape(df_prepared, selected_condition)
 
+    smoker_labels = {
+        "Never smoked": "never smokers",
+        "Former smoker": "former smokers",
+        "Current smoker": "current smokers",
+    }
+
+    e_cig_labels = {
+        "Never used e-cigarettes in my entire life": "never e-cigarette users",
+        "Not at all (right now)": "non-current e-cigarette users",
+        "Use them every day": "daily e-cigarette users",
+        "Use them some days": "occasional e-cigarette users",
+    }
+
+    highest = df_prepared.loc[df_prepared["Case Ratio (%)"].idxmax()]
+
+    st.markdown(
+        f"This chart shows the **{CONDITION_LABELS[selected_condition]} case ratio across traditional smoking statuses, further grouped by vape or e-cigarette usage**. Within each smoking category, case ratios vary across vape usage groups, with <mark>the highest observed value occurring among {smoker_labels[highest['Traditional Smoker Status']]} and {e_cig_labels[highest['Vape/E-Cig Usage']]} at approximately {highest['Case Ratio (%)']}%</mark>. Overall, the chart highlights differences in {CONDITION_LABELS[selected_condition]} case ratios across combinations of smoking and vape use behaviors.",
+        unsafe_allow_html=True,
+    )
+
 
 def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None

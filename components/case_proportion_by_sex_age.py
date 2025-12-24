@@ -33,7 +33,7 @@ def render_case_proportion_by_sex_age(
     most_balanced = pivot.loc[pivot["Imbalance"].idxmin()]
 
     st.markdown(
-        f"This chart shows the **proportion of {CONDITION_LABELS[selected_condition]} cases by sex across different age categories**, highlighting how male and female case shares vary as age increases. <mark>In {most_imbalanced['Age Category']}, {dominant_sex} accounts for a larger proportion ({most_imbalanced[f'{dominant_sex} %']:.2f} %), while {most_balanced['Age Category']} shows a more even distribution between sexes</mark>, indicating that sex-related differences in {CONDITION_LABELS[selected_condition]} cases may change across age groups.",
+        f"This chart shows the **proportion of {CONDITION_LABELS[selected_condition]} cases by sex across different age categories**, highlighting how male and female case shares vary as age increases. <mark>In {most_imbalanced['Age Category']}, {dominant_sex} accounts for a larger proportion ({most_imbalanced[f'{dominant_sex} %']:.2f}%), while {most_balanced['Age Category']} shows a more even distribution between sexes</mark>, indicating that sex-related differences in {CONDITION_LABELS[selected_condition]} cases may change across age groups.",
         unsafe_allow_html=True,
     )
 

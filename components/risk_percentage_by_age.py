@@ -22,7 +22,7 @@ def render_risk_percentage_by_age(
         lowest = df_prepared.loc[df_prepared["Risk Percentage (%)"].idxmin()]
 
         st.markdown(
-            f"This chart presents the **percentage distribution of {CONDITION_LABELS[selected_condition]} risk across different age groups**, with values ranging from {lowest['Risk Percentage (%)']} % in {lowest['Age Category']} to {highest['Risk Percentage (%)']} % in {highest['Age Category']}."
+            f"This chart presents the **percentage distribution of {CONDITION_LABELS[selected_condition]} risk across different age groups**, with values ranging from {lowest['Risk Percentage (%)']}% in {lowest['Age Category']} to {highest['Risk Percentage (%)']}% in {highest['Age Category']}."
         )
 
 

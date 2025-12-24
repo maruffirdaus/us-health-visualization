@@ -19,6 +19,19 @@ def render_cases_by_physical_activities(
     with cols[0].container(border=True):
         _plot_cases_by_physical_activities(df_prepared)
 
+    with cols[1]:
+        physical_activities_labels = {
+            "Yes": "physically active",
+            "No": "physically inactive",
+        }
+
+        df_sorted = df_prepared.sort_values(by="Number of Cases", ascending=False)
+
+        st.markdown(
+            f"This chart shows the **distribution of {CONDITION_LABELS[selected_condition]} cases by physical activity status**, comparing individuals who are physically active with those who are not. <mark>A higher number of cases is observed among {physical_activities_labels[df_sorted.iloc[0]['Physically Active']]} individuals ({df_sorted.iloc[0]['Number of Cases']}) compared with {physical_activities_labels[df_sorted.iloc[1]['Physically Active']]} individuals ({df_sorted.iloc[1]['Number of Cases']})</mark>, highlighting a difference in case counts between the two activity groups.",
+            unsafe_allow_html=True,
+        )
+
 
 def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None

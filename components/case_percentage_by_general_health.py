@@ -21,6 +21,16 @@ def render_case_percentage_by_general_health(
     with cols[0].container(border=True):
         _plot_case_percentage_by_general_health(df_prepared)
 
+    with cols[1]:
+        df_sorted = df_prepared.sort_values(
+            by="Case Percentage (%)", ascending=False
+        ).head(2)
+
+        st.markdown(
+            f"This chart shows **the percentage distribution of {CONDITION_LABELS[selected_condition]} cases across general health categories**, where the categories themselves represent overall health status ranging from Poor to Excellent. <mark>The largest share of cases is observed in the {df_sorted.iloc[0]['General Health']} category at approximately {df_sorted.iloc[0]['Case Percentage (%)']}%, followed by {df_sorted.iloc[1]['General Health']} with {df_sorted.iloc[1]['Case Percentage (%)']}%</mark>, while other health categories account for smaller proportions of cases.",
+            unsafe_allow_html=True,
+        )
+
 
 def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None
