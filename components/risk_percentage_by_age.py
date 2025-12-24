@@ -5,7 +5,28 @@ import streamlit as st
 from constants.conditions import CONDITION_LABELS
 
 
-def plot_risk_percentage_by_age(
+def render_risk_percentage_by_age(
+    df: pd.DataFrame, selected_condition: str, selected_state: str | None
+):
+    st.markdown(f"##### {CONDITION_LABELS[selected_condition]} Risk Percentage by Age")
+
+    df_prepared = _prepare_data_frame(df, selected_condition, selected_state)
+
+    cols = st.columns([3, 2])
+
+    with cols[0].container(border=True):
+        _plot_risk_percentage_by_age(df_prepared)
+
+    with cols[1]:
+        highest = df_prepared.loc[df_prepared["Risk Percentage (%)"].idxmax()]
+        lowest = df_prepared.loc[df_prepared["Risk Percentage (%)"].idxmin()]
+
+        st.markdown(
+            f"This chart presents the **percentage distribution of {CONDITION_LABELS[selected_condition]} risk across different age groups**, with values ranging from {lowest['Risk Percentage (%)']} % in {lowest['Age Category']} to {highest['Risk Percentage (%)']} % in {highest['Age Category']}."
+        )
+
+
+def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None
 ):
     df_cases = df[df[selected_condition] == "Yes"]
@@ -46,8 +67,12 @@ def plot_risk_percentage_by_age(
 
     df_final.rename(columns={"AgeCategory": "Age Category"}, inplace=True)
 
+    return df_final
+
+
+def _plot_risk_percentage_by_age(df: pd.DataFrame):
     chart = (
-        alt.Chart(df_final)
+        alt.Chart(df)
         .mark_arc(outerRadius=120)
         .encode(
             theta=alt.Theta("Risk Percentage (%):Q", stack=True),
@@ -59,8 +84,8 @@ def plot_risk_percentage_by_age(
             ],
         )
         .properties(
-            title=f"{CONDITION_LABELS[selected_condition]} Risk Percentage by Age",
-            height=300,
+            title="",
+            height=350,
         )
     )
 

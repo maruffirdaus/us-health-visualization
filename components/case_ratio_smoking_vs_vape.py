@@ -5,7 +5,20 @@ import streamlit as st
 from constants.conditions import CONDITION_LABELS
 
 
-def plot_case_ratio_smoking_vs_vape(
+def render_case_ratio_smoking_vs_vape(
+    df: pd.DataFrame, selected_condition: str, selected_state: str | None
+):
+    st.markdown(
+        f"##### {CONDITION_LABELS[selected_condition]} Case Ratio: Traditional Smoking vs Vape/E-Cig Use"
+    )
+
+    df_prepared = _prepare_data_frame(df, selected_condition, selected_state)
+
+    with st.container(border=True):
+        _plot_case_ratio_smoking_vs_vape(df_prepared, selected_condition)
+
+
+def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None
 ):
     df_copy = df.copy()
@@ -37,6 +50,10 @@ def plot_case_ratio_smoking_vs_vape(
         df_risk["Number of Cases"] / df_risk["Total Population"] * 100
     ).round(2)
 
+    return df_risk
+
+
+def _plot_case_ratio_smoking_vs_vape(df: pd.DataFrame, selected_condition: str):
     smoker_order = [
         "Never smoked",
         "Former smoker",
@@ -44,13 +61,13 @@ def plot_case_ratio_smoking_vs_vape(
     ]
 
     fig = px.bar(
-        df_risk,
+        df,
         x="Traditional Smoker Status",
         y="Case Ratio (%)",
         color="Vape/E-Cig Usage",
         barmode="group",
         category_orders={"Traditional Smoker Status": smoker_order},
-        title=f"{CONDITION_LABELS[selected_condition]} Case Ratio: Traditional Smoking vs Vape/E-Cig Use",
+        title="",
     )
 
     fig.update_traces(textposition="outside")

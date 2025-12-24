@@ -5,7 +5,22 @@ import streamlit as st
 from constants.conditions import CONDITION_LABELS
 
 
-def plot_us_map(df: pd.DataFrame, selected_condition: str):
+def render_us_map(df: pd.DataFrame, selected_condition: str):
+    df_prepared = _prepare_data_frame(df, selected_condition)
+
+    with st.container(border=True):
+        _plot_us_map(df_prepared, selected_condition)
+
+    highest = df_prepared.loc[df_prepared[selected_condition].idxmax()]
+    lowest = df_prepared.loc[df_prepared[selected_condition].idxmin()]
+
+    st.markdown(
+        f"This map shows the **total number of {CONDITION_LABELS[selected_condition]} cases** across the United States, with <mark>{highest['State']} reporting the highest count ({highest[selected_condition]}) and {lowest['State']} the lowest ({lowest[selected_condition]})</mark>.",
+        unsafe_allow_html=True,
+    )
+
+
+def _prepare_data_frame(df: pd.DataFrame, selected_condition: str):
     df_counts = (
         df[df[selected_condition] == "Yes"]
         .groupby(["State", "StateCode"])
@@ -13,8 +28,12 @@ def plot_us_map(df: pd.DataFrame, selected_condition: str):
         .reset_index(name=selected_condition)
     )
 
+    return df_counts
+
+
+def _plot_us_map(df: pd.DataFrame, selected_condition: str):
     fig = px.choropleth(
-        df_counts,
+        df,
         locations="StateCode",
         locationmode="USA-states",
         color=selected_condition,

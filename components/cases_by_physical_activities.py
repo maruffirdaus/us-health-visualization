@@ -5,7 +5,22 @@ import streamlit as st
 from constants.conditions import CONDITION_LABELS
 
 
-def plot_cases_by_physical_activities(
+def render_cases_by_physical_activities(
+    df: pd.DataFrame, selected_condition: str, selected_state: str | None
+):
+    st.markdown(
+        f"##### {CONDITION_LABELS[selected_condition]} Case Distribution by Physical Activities"
+    )
+
+    df_prepared = _prepare_data_frame(df, selected_condition, selected_state)
+
+    cols = st.columns([3, 2])
+
+    with cols[0].container(border=True):
+        _plot_cases_by_physical_activities(df_prepared)
+
+
+def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None
 ):
     df_cases = df[df[selected_condition] == "Yes"]
@@ -16,12 +31,18 @@ def plot_cases_by_physical_activities(
     df_cases.rename(columns={"PhysicalActivities": "Physically Active"}, inplace=True)
     df_cases.rename(columns={selected_condition: "Number of Cases"}, inplace=True)
 
-    df_counts = df_cases.groupby("Physically Active", as_index=False)[
-        "Number of Cases"
-    ].count()
+    df_counts = (
+        df_cases.groupby("Physically Active", as_index=False)["Number of Cases"]
+        .count()
+        .reset_index()
+    )
 
+    return df_counts
+
+
+def _plot_cases_by_physical_activities(df: pd.DataFrame):
     chart = (
-        alt.Chart(df_counts)
+        alt.Chart(df)
         .mark_bar()
         .encode(
             x=alt.X(
@@ -32,7 +53,7 @@ def plot_cases_by_physical_activities(
             tooltip=["Physically Active", "Number of Cases"],
         )
         .properties(
-            title=f"{CONDITION_LABELS[selected_condition]} Case Distribution by Physical Activities",
+            title="",
             height=350,
         )
         .interactive()

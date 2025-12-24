@@ -5,7 +5,40 @@ import streamlit as st
 from constants.conditions import CONDITION_LABELS
 
 
-def plot_smoking_alcohol_interaction(
+def render_smoking_alcohol_interaction(
+    df: pd.DataFrame, selected_condition: str, selected_state: str | None
+):
+    st.markdown(
+        f"##### Smoking & Alcohol Interaction: {CONDITION_LABELS[selected_condition]} Risk"
+    )
+
+    df_prepared = _prepare_data_frame(df, selected_condition, selected_state)
+
+    cols = st.columns([3, 2])
+
+    with cols[0].container(border=True):
+        _plot_smoking_alcohol_interaction(df_prepared, selected_condition)
+
+    with cols[1]:
+        highest = df_prepared.loc[df_prepared["Case Ratio (%)"].idxmax()]
+        smoker_status = (
+            "never smokers"
+            if highest["Smoker Status"] == "Never smoked"
+            else f"{str(highest['Smoker Status']).lower()}s"
+        )
+        alcohol_drinkers = (
+            "alcohol-drinking"
+            if highest["Alcohol Drinkers"] == "Yes"
+            else "non-alcohol-drinking"
+        )
+
+        st.markdown(
+            f"This chart illustrates the **interaction between smoking status and alcohol consumption in relation to {CONDITION_LABELS[selected_condition]}**, with bubble size and color representing the relative case ratio. <mark>The highest recorded ratio appears for {smoker_status} among {alcohol_drinkers} individuals at approximately {highest['Case Ratio (%)']:0.2f} %</mark>, while other combinations show varying levels, indicating that {CONDITION_LABELS[selected_condition]} prevalence differs across lifestyle behavior pairings.",
+            unsafe_allow_html=True,
+        )
+
+
+def _prepare_data_frame(
     df: pd.DataFrame, selected_condition: str, selected_state: str | None
 ):
     df_copy = df.copy()
@@ -37,10 +70,14 @@ def plot_smoking_alcohol_interaction(
         df_risk["Number of Cases"] / df_risk["Total Population"] * 100
     ).round(2)
 
+    return df_risk
+
+
+def _plot_smoking_alcohol_interaction(df: pd.DataFrame, selected_condition: str):
     color_scale = alt.Scale(scheme="orangered")
 
     chart = (
-        alt.Chart(df_risk)
+        alt.Chart(df)
         .mark_circle(opacity=0.8)
         .encode(
             x=alt.X(
@@ -70,7 +107,7 @@ def plot_smoking_alcohol_interaction(
             ],
         )
         .properties(
-            title=f"Smoking & Alcohol Interaction: {CONDITION_LABELS[selected_condition]} Risk",
+            title="",
             height=350,
         )
         .interactive()
